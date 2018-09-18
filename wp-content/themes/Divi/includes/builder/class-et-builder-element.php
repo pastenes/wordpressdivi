@@ -16,6 +16,7 @@ require_once 'module/field/Factory.php';
  */
 class ET_Builder_Element {
 	public $name;
+	public $plural;
 	public $slug;
 	public $type;
 	public $child_slug;
@@ -905,8 +906,8 @@ class ET_Builder_Element {
 		if ( strpos( $field_name, '#et_pb_' ) !== false ) {
 			// Truncate field name from the string wherever it's placed
 			$new_field_name = substr( $field_name, strpos( $field_name, '#et_pb_' ) + 7 );
-			$field_name = $new_field_name;
 			$message = "You're Doing It Wrong! You're using wrong name for 'affects' attribute. It should be '" . $new_field_name . "' instead of '" . $field_name . "'";
+			$field_name = $new_field_name;
 			et_debug( $message, 4, false );
 		}
 
@@ -9537,12 +9538,16 @@ class ET_Builder_Element {
 				$module_name = str_replace( '"', '%%', $module->name );
 				$module_name = str_replace( "'", '||', $module_name );
 
+				$module_name_plural = str_replace( '"', '%%', empty( $module->plural ) ? $module->name : $module->plural );
+				$module_name_plural = str_replace( "'", '||', $module_name_plural );
+
 				$_module = array(
-					'title' => esc_attr( $module_name ),
-					'label' => esc_attr( $module->slug ),
-					'is_parent' => $module->type === 'child' ? 'off' : 'on',
+					'title'              => esc_attr( $module_name ),
+					'plural'             => esc_attr( $module_name_plural ),
+					'label'              => esc_attr( $module->slug ),
+					'is_parent'          => $module->type === 'child' ? 'off' : 'on',
 					'is_official_module' => $module->_is_official_module,
-					'vb_support' => isset( $module->vb_support ) ? $module->vb_support : 'off',
+					'vb_support'         => isset( $module->vb_support ) ? $module->vb_support : 'off',
 				);
 
 				if ( isset( $module->fullwidth ) && $module->fullwidth ) {
@@ -9751,6 +9756,8 @@ class ET_Builder_Element {
 		self::$structure_modules = array();
 		foreach ( $parent_modules as $parent_module ) {
 			if ( isset( $parent_module->is_structure_element ) && $parent_module->is_structure_element ) {
+				$parent_module->plural = empty($parent_module->plural) ? $parent_module->name : $parent_module->plural;
+
 				self::$structure_modules[] = $parent_module;
 			}
 		}
