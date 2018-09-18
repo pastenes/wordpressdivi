@@ -5,8 +5,8 @@ services:
       - db
     image: wordpress:latest
     restart: always
-    #volumes:
-     # - ./wp-content:/var/www/html/wp-content
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_PASSWORD: data
